@@ -38,13 +38,13 @@ def apply_filters(products_dict, sort=None, in_stock=False):
 
 def home(request):
   totalProducts = len(PRODUCTS)
-  return HttpResponse(f"""
-                      <h1>Hello World</h1>
-                      <p>Nodfhsd{totalProducts}</p>
-                      <a href="/store/">Каталог</a>
-                      <a href="/store/search">Пошук</a>
-                      <a href="/store/orders">Замовлення</a>
-                      """)
+  context ={
+     'totalProducts':totalProducts,
+     'heading':'My Store'
+  }
+
+  return render(request,"store/home.html",context)
+ 
 
 def product_list(request):
   sort = request.GET.get("sort","")

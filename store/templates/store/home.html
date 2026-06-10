@@ -1,0 +1,28 @@
+{% extends "store/base.html" %}
+
+{% load static %}
+
+{% block title %} 
+  Інтернет-магазин | {{ block.super }} 
+{% endblock  %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'store/css/home.css' %}">
+{% endblock  %}
+
+{% block content %}
+  <h1>{{heading}}</h1>
+
+  <div>
+    {% if totalProducts > 0 %}
+      Товарів: {{totalProducts}}
+    {% else %}
+      Нажаль, склад порожній
+    {% endif %}
+  </div>
+
+  <a href="{% url "product_list" %}">Каталог</a>
+  <a href="/store/search">Пошук</a>
+  <a href="/store/orders">Замовлення</a>
+
+{% endblock %}
