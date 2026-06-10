@@ -1,0 +1,54 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MyStore{% endblock  %}</title>
+  <link rel="stylesheet" href="{% static 'css/global.css' %}">
+  {% block extra_css %}
+  {% endblock  %}
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">MyShop</div>
+
+<!-- Пошукове поле -->
+<form class="search-box" action="{% url 'search_view' %}" method="get">
+  <input type="text" name="q" placeholder="Пошук товарів...">
+  <button type="submit">🔍</button>
+</form>
+
+<!-- Навігація -->
+<nav class="nav-links">
+  <a href="{% url 'home' %}">Головна</a>
+  <a href="{% url 'product_list' %}" class="active">Каталог</a>
+  <a href="{% url 'order_list' %}">Замовлення</a>
+</nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    © 2026 MyShop — навчальний проект Django
+  </footer>
+  {% block extra_js %}{% endblock  %}
+
+  </body>
+  </html>
+
+  {% comment %} <header>Header</header>
+  
+
+  <main>
+    {% block content %}
+
+    {% endblock %}
+  </main>
+
+  <footer>Footer</footer>
+  {% block extra_js %}{% endblock  %} {% endcomment %}
