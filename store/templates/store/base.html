@@ -13,20 +13,7 @@
 <body>
 
   <header class="navbar">
-    <div class="logo">MyShop</div>
-
-<!-- Пошукове поле -->
-<form class="search-box" action="{% url 'search_view' %}" method="get">
-  <input type="text" name="q" placeholder="Пошук товарів...">
-  <button type="submit">🔍</button>
-</form>
-
-<!-- Навігація -->
-<nav class="nav-links">
-  <a href="{% url 'home' %}">Головна</a>
-  <a href="{% url 'product_list' %}" class="active">Каталог</a>
-  <a href="{% url 'order_list' %}">Замовлення</a>
-</nav>
+    {% include "store/header.html" %}
   </header>
 
   <main>
