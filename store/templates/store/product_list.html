@@ -1,0 +1,32 @@
+{% extends "store/base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static "store/css/style.css" %}">
+{% endblock  %}
+
+{% block title %}Каталог товарів | {{block.super}} {% endblock title %}
+
+
+
+
+{% block content %}
+
+  {% if products %}
+  <div class="catalog-container">
+  {% include "store/components/filter_panel.html" %}
+  
+    <div class="product-grid">
+      {% for product in products %}
+
+        {% include "store/components/product_card.html" with show_stock=false %}
+        
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+    <p>Товар не знайдено!</p>
+  {% endif %}
+
+{% endblock  %}

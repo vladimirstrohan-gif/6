@@ -1,0 +1,30 @@
+{% extends "store/base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static "store/css/style.css" %}"
+{% endblock  %}
+
+{% block title %}Пошук товарів | {{block.super}} {% endblock title %}
+
+{% block content %}
+
+  <h1>Pезультат пошуку: {{query}} </h1>
+  <p>Кількість знайдених товарів: {{count}}</p>
+
+  {% if products %}
+  
+    <div class="product-grid">
+      {% for product in products %}
+
+        {% include "store/components/product_card.html" with show_stock=True %}
+        
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <p>Товар не знайдено!</p>
+  {% endif %}
+
+{% endblock  %}

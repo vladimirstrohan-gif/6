@@ -1,0 +1,23 @@
+{% load static %}
+
+
+
+<div class="product-card {{product.stock|yesno:',disabled'}}">
+          <div class="product-title">
+            <a href="{% url "product_detail" product.id %}">
+            {{product.name}}</a></div>
+          <div class="product-price">{{product.price}} грн</div>
+          <div class="product-stock">
+            {% if product.stock %}
+              <p>На складі: {{product.stock}} шт.</p>
+            {% else %}
+              <p>Товар відсутній</p>
+            {% endif %}
+            </div>
+            {% if product.stock %}
+            <div>
+              <a href="{% url "order_views" product.id %}">Замовити</a>
+            </div>
+            {% endif %}
+
+        </div>

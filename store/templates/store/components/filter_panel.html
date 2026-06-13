@@ -1,0 +1,33 @@
+<aside class="filters">
+  <h3>Фільтри</h3>
+
+  <form method="get" action="{% url 'product_list' %}">
+    
+    <label>Ціна:</label><br>
+    <input type="number" name="price_min" value="{{ price_min|default:'' }}" placeholder="Від">
+    <input type="number" name="price_max" value="{{ price_max|default:'' }}" placeholder="До"><br><br>
+
+    <label>
+      <input type="checkbox" name="in_stock" value="1" {% if in_stock %}checked{% endif %}>
+      Тільки в наявності
+    </label><br><br>
+
+    <label>Категорія:</label><br>
+    {% for key, name in all_categories %}
+      <label>
+        <input type="checkbox" name="category" value="{{ key }}" {% if key in categories %}checked{% endif %}>
+        {{ name }}
+      </label><br>
+    {% endfor %}
+
+    <label>Сортувати:</label><br>
+    <select name="sort">
+      <option value="">Без сортування</option>
+      <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Ціна ↑</option>
+      <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Ціна ↓</option>
+      <option value="name" {% if sort == 'name' %}selected{% endif %}>Назва</option>
+    </select><br><br>
+
+    <button type="submit" class="btn-filter">Фільтрувати</button>
+  </form>
+</aside>

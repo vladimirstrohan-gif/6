@@ -30,6 +30,7 @@ main {
 
 /* Пошукове поле */
 .search-box {
+  position: relative;
   display: flex;
   align-items: center;
   background-color: #1f2937;
@@ -96,4 +97,26 @@ footer a {
 
 footer a:hover {
   color: #f9fafb;            
+}
+
+
+search-box{
+  position: relative;
+}
+
+.suggestion-block{
+  position: absolute;
+  left: 0;
+  top: 30px;
+  width: 100%;
+  background-color: #fff;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.suggestion-block a{
+  display: block;
+  margin-bottom: 8px;
 }

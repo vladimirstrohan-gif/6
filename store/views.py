@@ -49,17 +49,33 @@ def home(request):
 def product_list(request):
   sort = request.GET.get("sort","")
   in_stock = request.GET.get("in_stock")=="1"
+  price_min = request.GET.get("price_min")
+  price_max = request.GET.get("price_max")
+  categories = request.GET.getlist("category")
 
-  products = apply_filters(PRODUCTS, sort=sort, in_stock=in_stock)
+  price_min = int(price_min) if price_min else None
+  price_max = int(price_max) if price_max else None
 
-  return JsonResponse({
-    "filters":{
-      "sort":sort or None,
-      "in_stock": in_stock,
-    },
-    "count": len(products),
-    "products": products,
-  },json_dumps_params={"ensure_ascii":False,"indent":2})
+  
+
+  products = apply_filters(
+      PRODUCTS, 
+      sort=sort, 
+      in_stock=in_stock,
+      price_min=price_min,
+      price_max=price_max,
+      categories=categories
+      )
+
+  return render(request,"store/product_list.html",{
+      "products":products,
+      "sort":sort,
+      "in_stock":in_stock,
+      "price_min": price_min,
+      "price_max": price_max,
+      "categories": categories,
+      "all_categories": CATEGORY_NAMES.items()
+  })
 
 def product_detail(request, product_id):
   product = PRODUCTS.get(product_id)
@@ -102,24 +118,29 @@ def category_view(request, category):
 # Завдання 6 
 # http://127.0.0.1:8000/store/search/?q=Книга
 # http://127.0.0.1:8000/store/search/?q=test
-def search_view(request):
-    
-    query = request.GET.get("q", "").lower()
-    if not query:
-        return JsonResponse({"error": "Параметр 'q' є обов'язковим"}, status=400, json_dumps_params={"ensure_ascii": False, "indent": 2})
+def search(request):
+    is_ajax = request.headers.get("X-Requested-With")=="XMLHttpRequest"
+    query = request.GET.get("q", "").lower().strip()
+    products = []
 
-    matched_products = [
+    if query:
+     products = [
         product_to_dict(pid, p)
         for pid, p in PRODUCTS.items()
-        if query in p["name"].lower()
+        if query in p["name"].lower().strip()
     ]
+     
+    if is_ajax:
+       return JsonResponse(
+          {"products":products},
+          json_dumps_params={"ensure_ascii":False}
+       )
 
-    return JsonResponse({
+    return render(request,"store/search.html",{
         "query": query,
-        "count": len(matched_products),
-        "products": matched_products,
-        }, 
-        json_dumps_params={"ensure_ascii": False, "indent": 2})
+        "count": len(products),
+        "products": products
+        })
 
 # Завдання 7
 # http://127.0.0.1:8000/store/order/1/
@@ -181,3 +202,28 @@ def old_catalog(request):
     response = redirect('product_list', permanent=True)
     response['X-Redirect-Reason'] = 'page-deprecated'
     return response
+
+
+def apply_filters(products_dict, sort=None, in_stock=False, price_min=None, price_max=None, categories=None):
+   
+    items = [product_to_dict(pid, p) for pid, p in products_dict.items()]
+
+    if in_stock:
+        items = [p for p in items if p["available"]]
+
+    if price_min:
+        items = [p for p in items if p["price"] >= price_min]
+    if price_max:
+        items = [p for p in items if p["price"] <= price_max]
+
+    if categories:
+        items = [p for p in items if p["category"] in categories]
+
+    if sort == "price_asc":
+        items.sort(key=lambda p: p["price"])
+    elif sort == "price_desc":
+        items.sort(key=lambda p: p["price"], reverse=True)
+    elif sort == "name":
+        items.sort(key=lambda p: p["name"])
+
+    return items

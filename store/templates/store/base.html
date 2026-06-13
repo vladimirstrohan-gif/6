@@ -13,7 +13,7 @@
 <body>
 
   <header class="navbar">
-    {% include "store/header.html" %}
+    {% include "store/components/header.html" %}
   </header>
 
   <main>
@@ -23,7 +23,8 @@
   <footer>
     © 2026 MyShop — навчальний проект Django
   </footer>
-  {% block extra_js %}{% endblock  %}
+    <script src="{% static "js/script.js" %}"></script>
+    {% block extra_js %}{% endblock  %}
 
   </body>
   </html>

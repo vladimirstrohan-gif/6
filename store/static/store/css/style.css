@@ -1,0 +1,126 @@
+.catalog-container {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+/* Сітка товарів */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+  flex: 1;
+}
+
+/* Картка товару */
+.product-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 200px; /* фіксована висота */
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.product-card.disabled {
+  opacity: 0.6;
+}
+
+/* Назва */
+.product-title a {
+   display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-title a:hover {
+  color: #f43f5e;
+}
+
+/* Ціна */
+.product-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f43f5e;
+  margin: 8px 0;
+}
+
+/* Наявність */
+.product-stock {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.product-stock p {
+  margin: 4px 0;
+}
+
+.product-stock.out-of-stock {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Кнопка */
+.product-card a {
+  display: inline-block;
+  margin-top: 12px;
+  background-color: #f43f5e;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.product-card a:hover {
+  background-color: #e11d48;
+}
+
+/* Фільтр */
+
+.filters {
+  width: 220px;
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.filters h3 {
+  margin-top: 0;
+  color: #111827;
+}
+
+.filters input,
+.filters select {
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+
+.btn-filter {
+  background-color: #f43f5e;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-filter:hover {
+  background-color: #e11d48;
+}
