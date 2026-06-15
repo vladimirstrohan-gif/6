@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from .data import PRODUCTS, ORDERS, VALID_CATEGORIES,CATEGORY_NAMES
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
+from .models import Product
 
 #Допоміжні функції
 
@@ -37,9 +38,14 @@ def apply_filters(products_dict, sort=None, in_stock=False):
 # Views функції
 
 def home(request):
-  totalProducts = len(PRODUCTS)
+  totalProducts = Product.objects.count()
+  available_products = Product.objects.filter(is_available=True, stock__gt=0).count()
+  latest_products = Product.objects.filter(is_available=True, stock__gt=0).order_by('-created_at')[:4]
+  
   context ={
      'totalProducts':totalProducts,
+     'available_products':available_products,
+     'latest_products': latest_products,
      'heading':'My Store'
   }
 

@@ -1,0 +1,40 @@
+{% extends "store/base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Анкета кандидата | {{ block.super }}
+{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'pages/css/apply.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="apply-form">
+    <h1>Анкета кандидата</h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="message message-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'apply' %}" novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      {% for field in form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}
+            <div class="error">{{ field.errors }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="submit-btn">Надіслати анкету</button>
+    </form>
+  </div>
+{% endblock %}

@@ -15,14 +15,16 @@
 
   <div>
     {% if totalProducts > 0 %}
-      Товарів: {{totalProducts}}
+    <div>Товарів: {{totalProducts}}</div>
+    <div>В наявності: {{available_products}}</div>
+      
     {% else %}
-      Нажаль, склад порожній
+      <p>Нажаль, склад порожній</p>
     {% endif %}
-  </div>
 
-  <a href="{% url "product_list" %}">Каталог</a>
-  <a href="/store/search">Пошук</a>
-  <a href="/store/orders">Замовлення</a>
+    {% for product in latest_products %}
+      <div>{{product.name}}</div>
+    {% endfor %}
+  </div>
 
 {% endblock %}
