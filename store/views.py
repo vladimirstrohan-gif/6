@@ -3,7 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from .data import PRODUCTS, ORDERS, VALID_CATEGORIES,CATEGORY_NAMES
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
-from .models import Product
+from .models import Product,Order
 
 #Допоміжні функції
 
@@ -38,18 +38,13 @@ def apply_filters(products_dict, sort=None, in_stock=False):
 # Views функції
 
 def home(request):
-  totalProducts = Product.objects.count()
-  available_products = Product.objects.filter(is_available=True, stock__gt=0).count()
-  latest_products = Product.objects.filter(is_available=True, stock__gt=0).order_by('-created_at')[:4]
-  
-  context ={
-     'totalProducts':totalProducts,
-     'available_products':available_products,
-     'latest_products': latest_products,
-     'heading':'My Store'
-  }
-
-  return render(request,"store/home.html",context)
+    latest_products = Product.objects.order_by('-id')[:5]
+    return render(request, 'store/home.html', {
+        'heading': "Головна сторінка",
+        'totalProducts': Product.objects.count(),
+        'available_products': Product.objects.filter(is_available=True).count(),
+        'latest_products': latest_products
+    })
  
 
 def product_list(request):
@@ -84,22 +79,41 @@ def product_list(request):
   })
 
 def product_detail(request, product_id):
-  product = PRODUCTS.get(product_id)
-  if  product is None:
-    return JsonResponse({"error":"Товар не знайдено"}, status=404, json_dumps_params={"ensure_ascii":False,"indent":2})
+    product = Product.objects.filter(id=product_id).first()
+    if not product:
+        return JsonResponse({"error": "Товар не знайдено"}, status=404)
 
-  return JsonResponse(product_to_dict(product_id, product), json_dumps_params={"ensure_ascii":False,"indent":2})
+    data = {
+        "id": product.id,
+        "name": product.name,
+        "description": product.description,
+        "price": float(product.price),
+        "sale_price": float(product.sale_rpice) if product.sale_rpice else None,
+        "stock": product.stock,
+        "available": product.available,
+        "category": product.category.name if product.category else None,
+    }
+
+    return JsonResponse(data, json_dumps_params={"ensure_ascii": False, "indent": 2})
 
 
 def order_list(request):
-  if not ORDERS:
-    return JsonResponse( 
-       {"message": "Замовлень поки немає", "orders": []}, 
-       json_dumps_params={"ensure_ascii":False,"indent":2})
-  return JsonResponse({
-     "count": len(ORDERS),
-     "orders": ORDERS
-     }, json_dumps_params={"ensure_ascii":False,"indent":2})
+    orders = Order.objects.all()
+    if not orders.exists():
+        return JsonResponse({"message": "Замовлень поки немає", "orders": []}, json_dumps_params={"ensure_ascii": False, "indent": 2})
+
+    data = [
+        {
+            "order_id": o.id,
+            "product_name": o.product_name,
+            "quantity": o.quantity,
+            "total_price": float(o.total_price),
+            "customer_name": o.customer_name,
+            "phone": o.phone
+        }
+        for o in orders
+    ]
+    return JsonResponse({"count": len(data), "orders": data}, json_dumps_params={"ensure_ascii": False, "indent": 2})
   
 # Завдання 5 
 # http://127.0.0.1:8000/store/category/electronics/
@@ -154,53 +168,54 @@ def search(request):
 
 
 @csrf_exempt
-def order_views(request,product_id):
-  product = PRODUCTS.get(product_id)
+def order_views(request, product_id):
+    product = Product.objects.filter(id=product_id).first()
+    if not product:
+        return JsonResponse({"error": "Товар не знайдено"}, status=404)
 
-  if  product is None:
-    return JsonResponse({"error":"Товар не знайдено"}, status=404, json_dumps_params={"ensure_ascii":False,"indent":2})
+    if request.method == "GET":
+        return HttpResponse(f"""
+            <h1>Оформлення замовлення для {product.name}</h1>
+            <form method="POST">
+              <input type="text" name="name" placeholder="Ім'я"> <br>
+              <input type="text" name="phone" placeholder="Телефон"> <br>
+              <input type="number" name="quantity" placeholder="Кількість" min="1"> <br>
+              <button>Оформити замовлення</button>
+            </form>
+        """)
 
-  if request.method == "GET":
-     return HttpResponse(f"""
-                      <h1>Оформлення замовлення для {product["name"]}</h1>
-                      <form method="POST">
-                        <input type="text" name="name" placeholder="Ім'я"> <br>
-                        <input type="text" name="phone" placeholder="Телефон"> <br>
-                        <input type="text" name="quantity" placeholder="Кількість"> <br>
-                        <button>Оформити замовлення</button>
-                      </form>
-                      """)
-  
-  if request.method == "POST":
-    name = request.POST.get("name", "").strip()
-    phone = request.POST.get("phone", "").strip()
-    quantity = request.POST.get("quantity", "").strip()
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        phone = request.POST.get("phone", "").strip()
+        quantity = request.POST.get("quantity", "").strip()
 
-    errors = {}
+        errors = {}
+        if not name:
+            errors["name"] = "Ім'я є обов'язковим полем"
+        if not phone:
+            errors["phone"] = "Телефон є обов'язковим полем"
+        if not quantity:
+            errors["quantity"] = "Кількість є обов'язковим полем"
 
-    if not name:
-      errors["name"] = "Ім'я є обов'язковим полем"
-    if not phone:
-      errors["phone"] = "Телефон є обов'язковим полем"
-    if not quantity:
-      errors["quantity"] = "Кількість є обов'язковим полем"
+        if errors:
+            return JsonResponse({"errors": errors}, status=400, json_dumps_params={"ensure_ascii": False, "indent": 2})
 
-    if errors:
-      return JsonResponse({"errors": errors}, status=400, json_dumps_params={"ensure_ascii": False, "indent": 2})
-    
-    if product["stock"] == 0:
-      return JsonResponse({"error":"Товар відсутній на складі"}, status=400, json_dumps_params={"ensure_ascii":False,"indent":2})
-    order ={
-            "order_id": len(ORDERS) + 1,
-            "product_id": product_id,
-            "product_name": product["name"],
-            "quantity": request.POST.get("quantity"),
-            "total_price": int(request.POST.get("quantity")) * product["price"],
-            "customer_name": request.POST.get("name"),
-            "phone": request.POST.get("phone"),
-            }
-    ORDERS.append(order)
-    return redirect ("order_list")
+        quantity = int(quantity)
+        if product.stock == 0:
+            return JsonResponse({"error": "Товар відсутній на складі"}, status=400, json_dumps_params={"ensure_ascii": False, "indent": 2})
+
+        total_price = product.price * quantity
+
+        Order.objects.create(
+            product_id=product.id,
+            product_name=product.name,
+            quantity=quantity,
+            total_price=total_price,
+            customer_name=name,
+            phone=phone
+        )
+
+        return redirect("order_list")
   
 # Завдання 9
 # http://127.0.0.1:8000/store/old-catalog/

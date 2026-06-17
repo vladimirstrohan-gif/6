@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category,Product,ProductTag,Tag,Attribute, AttributeValue, ProductAttribute,Comment
+from .models import Category,Product,ProductTag,Tag,Attribute, AttributeValue, ProductAttribute,Comment,Order
 from django.utils.html import format_html
 
 @admin.register(Comment)
@@ -64,6 +64,14 @@ class ProductTagInline(admin.TabularInline):
 class TagAdmin(admin.ModelAdmin):
    prepopulated_fields={'slug':('name',)}
    search_fields = ('name',)
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['product_name', 'customer_name', 'phone', 'quantity', 'total_price']
+    search_fields = ['product_name', 'customer_name', 'phone']
+    list_filter = ['product_name']
+    ordering = ['-id']
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):

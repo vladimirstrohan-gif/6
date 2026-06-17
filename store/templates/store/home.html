@@ -13,6 +13,22 @@
 {% block content %}
   <h1>{{heading}}</h1>
 
+  <h2>Новинки</h2>
+
+  <div class="carousel">
+    <div class="carousel-track">
+      {% for product in latest_products %}
+        <div class="carousel-item">
+          {% include "store/components/product_card.html" %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <button class="carousel-btn prev">←</button>
+    <button class="carousel-btn next">→</button>
+  </div>
+
+
   <div>
     {% if totalProducts > 0 %}
     <div>Товарів: {{totalProducts}}</div>
@@ -28,3 +44,34 @@
   </div>
 
 {% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const track = document.querySelector(".carousel-track");
+    const items = document.querySelectorAll(".carousel-item");
+    const prevBtn = document.querySelector(".carousel-btn.prev");
+    const nextBtn = document.querySelector(".carousel-btn.next");
+
+    let index = 0;
+
+    function updateCarousel() {
+      const itemWidth = items[0].offsetWidth + 20; // ширина + відступ
+      track.style.transform = `translateX(-${index * itemWidth}px)`;
+    }
+
+    prevBtn.addEventListener("click", () => {
+      if (index > 0) {
+        index--;
+        updateCarousel();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (index < items.length - 1) {
+        index++;
+        updateCarousel();
+      }
+    });
+  });
+</script>{% endblock  %}
