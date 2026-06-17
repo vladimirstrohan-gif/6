@@ -1,7 +1,22 @@
 from django.db import models
-from .mixins import SlugMixin,TimeMisin
+from .mixins import SlugMixin,TimeMisin,ImageMixin
+from .tag import Tag
   
-class Product(SlugMixin,TimeMisin):
+class Product(SlugMixin,TimeMisin,ImageMixin):
+  # tags = models.ManyToManyField(
+  #   Tag,
+  #   blank=True,
+  #   verbose_name='Теги',
+  #   related_name='products'
+  #   )
+
+  tags = models.ManyToManyField(
+    Tag, 
+    through='ProductTag',
+    blank=True,
+    verbose_name='Теги',
+    related_name='products'
+  )
   category = models.ForeignKey(
     'Category', 
     related_name='products',
