@@ -1,14 +1,35 @@
 
 <div class="logo">MyShop</div>
 
+<nav>
+  {% for category in categories %}
+
+    <a href="{% url "category_detail" category.slug %}">{{category.name}}</a>
+  
+  {% endfor %}
+</nav>
+
 <form method="GET" class="search-box" action="{% url 'search' %}" >
   <input type="text" name="q" value="{{query}}" placeholder="Пошук товарів...">
   <button type="submit">🔍</button>
 </form>
 
 <nav class="nav-links">
-  <a href="{% url 'home' %}">Головна</a>
-  <a href="{% url 'product_list' %}" class="active">Каталог</a>
-  <a href="{% url 'order_list' %}">Замовлення</a>
-  <a href="{% url "apply" %}">Контакти</a>
+  <a href="{% url 'home' %}"> Головна </a>
+  <a href="{% url 'product_list' %}" class="active"> Каталог </a>
+  <a href="{% url 'order_list' %}"> Замовлення </a>
+  
+  {% if perms.store.add_product %}
+    <a href="{% url "apply" %}"> Контакти </a>
+
+  {% endif %}
+
+  {% if user.is_authenticated %}
+    Привіт, {{user.username}}!
+    <a href="{% url "accounts:logout" %}">Вийти</a>
+  {% else %}
+    <a href="{% url "accounts:register" %}">Реєстрація</a>
+    <a href="{% url "accounts:login" %}">Вхід</a>
+  {% endif %}
 </nav>
+

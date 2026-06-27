@@ -1,0 +1,45 @@
+{% extends "store/base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'accounts/css/auth.css' %}">
+{% endblock %}
+
+
+{% block title %}
+  Реєстрація | {{ block.super }}
+{% endblock %}
+ 
+{% block content %}
+<div class="auth-container">
+    <h1>Реєстрація</h1>
+   
+    {% if messages %}
+        {% for message in messages %}
+            <p class="message message-{{message.tags}}">{{message}}</p>
+        {% endfor %}
+    {% endif %}
+ 
+    <form method="POST" action="{% url "accounts:register" %}">
+        {% csrf_token %}
+       
+        {% for field  in form %}
+            <div style="margin-bottom: 15px;">
+                {{ field.label_tag }}
+                {{ field }}
+           
+                {% if field.errors %}
+                    <div style="color: red;">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+ 
+        <button type="submit">Зареєструватись</button>
+    </form>
+ 
+    <p>Вже маєте аккаунт? <a href="{% url "accounts:login" %}">Увійдіть</a></p>
+</div>
+{% endblock  %}

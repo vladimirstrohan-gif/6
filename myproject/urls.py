@@ -25,7 +25,8 @@ urlpatterns = [
     path('blog/',include('blog.urls')),
     path('',views.home, name='home'),
     path('store/',include('store.urls')),
-    path('',include('pages.urls'))
+    path('',include('pages.urls')),
+    path('accounts/',include('accounts.urls'))
 ]
 
 if settings.DEBUG:

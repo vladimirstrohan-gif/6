@@ -16,7 +16,7 @@
             </div>
             {% if product.stock %}
             <div>
-              <a href="{% url "order_views" product.id %}">Замовити</a>
+              <a href="{% url "create_order" product.id %}">Замовити</a>
             </div>
             {% endif %}
 

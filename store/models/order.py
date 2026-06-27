@@ -1,7 +1,9 @@
 from django.db import models
 from .product import Product
+from accounts.models import User
 
 class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Товар")
     product_name = models.CharField("Назва товару", max_length=255, editable=False)
     quantity = models.PositiveIntegerField("Кількість", default=1)

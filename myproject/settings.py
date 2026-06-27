@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blog',
     'store',
     'pages',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'store.context_processors.categories',
             ],
         },
     },
@@ -125,3 +127,7 @@ STATICFILES_DIRS=[
 MEDIA_URL = "/uploads/" 
 
 MEDIA_ROOT = BASE_DIR / "uploads"
+
+AUTH_USER_MODEL = 'accounts.User'
+
+LOGIN_URL = '/login'

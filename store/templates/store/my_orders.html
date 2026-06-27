@@ -1,0 +1,32 @@
+{% extends "store/base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'store/css/style.css' %}">
+{% endblock  %}
+
+{% block title %} 
+  Мої замовлення | {{ block.super }} 
+{% endblock  %}
+
+{% block content %}
+<div class="orders-container">
+    <h1>Мої замовлення</h1>
+
+    {% if orders %}
+        {% for order in orders %}
+            <div class="order-card">
+                <strong>{{ order.product.name }}</strong>
+
+                <div class="order-meta">
+                    Кількість: <b>{{ order.quantity }}</b><br>
+                    Сума: <b>{{ order.total_price }} грн</b><br>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="empty-msg">У вас ще немає замовлень.</p>
+    {% endif %}
+</div>
+{% endblock %}

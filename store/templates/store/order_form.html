@@ -1,0 +1,22 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'store/css/style.css' %}">
+{% endblock  %}
+
+
+{% block content %}
+<div class="order-container">
+    <h1>Оформлення замовлення</h1>
+
+    <p><strong>Товар:</strong> {{ product.name }}</p>
+    <p><strong>Ціна:</strong> {{ product.price }} грн</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="number" name="quantity" min="1" value="1" placeholder="Кількість">
+        <button type="submit">Підтвердити замовлення</button>
+    </form>
+</div>
+{% endblock %}

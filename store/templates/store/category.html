@@ -1,0 +1,38 @@
+{% extends "store/base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'store/css/style.css' %}">
+{% endblock  %}
+
+{% block title %} 
+  {{category.name}} | {{ block.super }} 
+{% endblock  %}
+
+{% block content %}
+
+  <h1>{{category.name}}</h1>
+
+    <div class="category-page">
+        <div class="filter">
+            <h3>Фільтри</h3>
+            {% for attribute in attributes %}
+              <div>
+                <h4>{{attribute.name}}</h4>
+                {% for av in attribute.values.all %}
+                  <div>
+                    {{av.value}}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+        </div>
+        <div class="product-grid">
+                {% for product in category.products.all %}
+                  {% include "store/components/product_card.html" with show_stock=False %}
+                {% endfor %}
+        </div>
+    </div>
+
+{% endblock  %}

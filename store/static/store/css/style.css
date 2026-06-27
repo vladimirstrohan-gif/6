@@ -124,3 +124,95 @@
 .btn-filter:hover {
   background-color: #e11d48;
 }
+
+
+.category-page{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 20px;
+}
+ 
+.filter{
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+ 
+.filter h3{
+    margin-top: 0;
+}
+
+
+
+
+.orders-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.orders-container h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.order-card {
+    border: 1px solid #ddd;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background: #fafafa;
+}
+
+.order-card strong {
+    font-size: 18px;
+}
+
+.order-meta {
+    margin-top: 8px;
+    color: #555;
+}
+
+.empty-msg {
+    text-align: center;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    color: #777;
+}
+
+
+.order-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.order-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.order-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.order-container button {
+    width: 100%;
+    padding: 10px;
+    background: #0078d4;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+}

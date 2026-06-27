@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from .product import Product
 
 class Comment(models.Model):
@@ -9,7 +9,7 @@ class Comment(models.Model):
     related_name='comments'
     )
   author = models.ForeignKey(
-    User, 
+    settings.AUTH_USER_MODEL,
     on_delete=models.CASCADE, 
     related_name='comments'
     )

@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404,redirect
 from django.http import JsonResponse, HttpResponse
 from .data import PRODUCTS, ORDERS, VALID_CATEGORIES,CATEGORY_NAMES
-from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
-from .models import Product,Order
+from .models import Product,Order,Category,AttributeValue,Attribute
+from django.db.models import Prefetch
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 #Допоміжні функції
 
@@ -39,6 +41,7 @@ def apply_filters(products_dict, sort=None, in_stock=False):
 
 def home(request):
     latest_products = Product.objects.order_by('-id')[:5]
+    
     return render(request, 'store/home.html', {
         'heading': "Головна сторінка",
         'totalProducts': Product.objects.count(),
@@ -248,3 +251,55 @@ def apply_filters(products_dict, sort=None, in_stock=False, price_min=None, pric
         items.sort(key=lambda p: p["name"])
 
     return items
+
+def category_detail(request,slug):
+    category = get_object_or_404(Category,slug=slug)
+
+    category_values = AttributeValue.objects.filter(
+        products_attr__product__category = category
+    ).distinct()
+
+    attributes =Attribute.objects.filter(
+        values__in = category_values
+    ).prefetch_related(
+        Prefetch("values",queryset = category_values)
+    ).distinct()
+
+    return render(request,"store/category.html",{
+        "category": category,
+        "attributes": attributes
+
+    })
+
+@login_required(login_url='/accounts/login/')
+def create_order(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == "POST":
+        quantity = int(request.POST.get("quantity", 1))
+
+        if quantity < 1:
+            messages.error(request, "Кількість має бути більше 0")
+            return redirect("create_order", product_id=product.id)
+
+        if product.stock < quantity:
+            messages.error(request, "Недостатньо товару на складі")
+            return redirect("create_order", product_id=product.id)
+
+        Order.objects.create(
+            user=request.user,
+            product=product,
+            quantity=quantity,
+            total_price=product.price * quantity,
+            customer_name=request.user.username,
+            phone=getattr(request.user, "phone_number", "")
+        )
+
+        messages.success(request, "Замовлення успішно оформлено!")
+        return redirect("store:my_orders")
+
+    return render(request, "store/order_form.html", {"product": product})
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user)
+    return render(request, "store/my_orders.html", {"orders": orders})
